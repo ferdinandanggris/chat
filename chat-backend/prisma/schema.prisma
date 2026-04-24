@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Tabel 1: Klien Anda (B2B)
+model Tenant {
+  id        String    @id @default(uuid())
+  name      String    
+  email     String    @unique
+  channels  Channel[] 
+  messages  Message[] 
+  createdAt DateTime  @default(now())
+}
+
+// Tabel 2: Jalur Koneksi
+model Channel {
+  id          String    @id @default(uuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  type        String    // "WA_UNOFFICIAL", "WA_CLOUD", "TELEGRAM"
+  config      Json      // Simpan IPv6 atau Access Token di sini
+  status      String    
+  messages    Message[]
+}
+
+// Tabel 3: Antrian Pesan Utama
+model Message {
+  id            String   @id @default(uuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  channelId     String
+  channel       Channel  @relation(fields: [channelId], references: [id])
+  destination   String   
+  content       String   
+  status        String   @default("PENDING") 
+  errorMessage  String?  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # 1. Database PostgreSQL
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: chat-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: supersecretpassword
+      POSTGRES_DB: wametadb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # 2. Redis untuk Antrian BullMQ
+  redis-queue:
+    image: redis:7.0-alpine
+    container_name: chat-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:
