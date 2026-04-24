@@ -27,3 +27,6 @@ build/
 
 # Prisma
 /chat-backend/prisma/migrations/
+
+# Session
+sessions/
